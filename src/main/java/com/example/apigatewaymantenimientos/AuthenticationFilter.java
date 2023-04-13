@@ -24,7 +24,6 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
     public GatewayFilter apply(Config config) {
         return (((exchange, chain) -> {
             if (validator.isSecured.test(exchange.getRequest())) {
-                System.out.println("is secured");
                 if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
                     throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
                 }
@@ -33,10 +32,9 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                     throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
                 String token = authorization.substring("Bearer ".length());
                 if(!jwtService.isTokenValid(token)){
-                    throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+                    throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
                 };
             }
-            System.out.println("is not secured");
             return chain.filter(exchange);
         }));
     }
