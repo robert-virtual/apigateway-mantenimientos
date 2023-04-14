@@ -15,13 +15,13 @@ spring:
         - id: queries
           uri: lb://queries
           predicates:
-            - Path=/queries/**,/apps/**,/fields/**,/tables/**
+            - Path=/queries/**,/fields/**,/tables/**
           filters:
             - AuthenticationFilter
         - id: authorization
-          uri: http://localhost:8181
+          uri: lb://authorization
           predicates:
-            - Path=/auth/**
+            - Path=/auth/**,/apps/**
         - id: ocb
           uri: lb://ocb
           predicates:
