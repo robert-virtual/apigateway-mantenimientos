@@ -11,6 +11,13 @@ spring:
     name: apiGateway
   cloud:
     gateway:
+      globalCors:
+        corsConfigurations:
+          "[/**]":
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
       routes:
         - id: queries
           uri: lb://queries
