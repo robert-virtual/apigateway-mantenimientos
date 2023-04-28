@@ -1,0 +1,64 @@
+app:
+  jwt:
+    access:
+      secret: secret
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+spring:
+  application:
+    name: apiGateway
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "GET, POST, PUT, DELETE, OPTIONS"
+            allowedHeaders: "Content-Type, Authorization"
+        add-to-simple-url-handler-mapping: true
+      routes:
+        - id: queries
+          uri: lb://queries
+          predicates:
+            - Path=/queries/**,/fields/**,/tables/**
+          filters:
+            - AuthenticationFilter
+        - id: authorization
+          uri: lb://authorization
+          predicates:
+            - Path=/auth/**,/apps/**
+        - id: ocb
+          uri: lb://ocb
+          predicates:
+            - Path=/ocb/**
+          filters:
+            - AuthenticationFilter
+        - id: voucher
+          uri: lb://voucher
+          predicates:
+            - Path=/voucher/**
+          filters:
+            - AuthenticationFilter
+        - id: eureka-server
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka/web
+          filters:
+            - SetPath=/
+        - id: eureka-server-static
+          uri: http://localhost:8761
+          predicates:
+            - Path=/eureka/**
+
+logging:
+  level:
+    root: info
+    org:
+      springframework:
+        cloud:
+          gateway:
+            - trace
+            - route:
+                RouteDefinitionLocator: info
